@@ -297,15 +297,14 @@ nav{
 .move-cell.t-brilliant{color:#1bafa3;}
 .move-cell.t-best{color:var(--cream);}
 .move-cell.t-good{color:var(--cream);}
-.move-cell.t-inaccuracy{color:#f0c25b;}
+.move-cell.t-inaccuracy{color:#e0c44c;}
 .move-cell.t-mistake{color:#e8883e;}
 .move-cell.t-blunder{color:#e05a4e;}
-.move-cell.t-miss{color:#e8883e;}
 
 .ann-brilliant{background:#1bafa3;color:#fff;}
-.ann-best{background:var(--green-light);color:#fff;}
-.ann-good{background:var(--green);color:#fff;}
-.ann-inaccuracy{background:#f0c25b;color:#1a1a1a;}
+.ann-best{background:#5c8a3c;color:#fff;}
+.ann-good{background:#7a9e5e;color:#fff;opacity:.75;}
+.ann-inaccuracy{background:#e0c44c;color:#1a1a1a;}
 .ann-mistake{background:#e8883e;color:#fff;}
 .ann-blunder{background:#e05a4e;color:#fff;}
 .ann-miss{background:#e8883e;color:#fff;}
@@ -397,7 +396,13 @@ nav{
   .piece-icon{width:14px;height:14px;}
   .ann-dot{width:14px;height:14px;font-size:7px;}
 
-  .analysis-panel{min-height:360px;}
+  .analysis-panel{min-height:360px;display:flex;flex-direction:column;}
+  .panel-controls-row{order:-1;border-top:none;border-bottom:1px solid var(--border);}
+  .comment-bubble{order:0;}
+  .eval-chart-section{order:1;}
+  .accuracy-row{order:2;}
+  .move-list{order:3;}
+  .analysis-status{order:-1;}
 }
 </style>
 </head>
@@ -914,20 +919,20 @@ function guessAnnotation(san, i) {
 }
 
 const ANN = {
-  brilliant:{cls:'ann-brilliant',sym:'!!',special:true},
-  best:{cls:'ann-best',sym:'★',special:false},
-  good:{cls:'ann-good',sym:'✓',special:false},
-  inaccuracy:{cls:'ann-inaccuracy',sym:'?!',special:true},
-  mistake:{cls:'ann-mistake',sym:'?',special:true},
-  blunder:{cls:'ann-blunder',sym:'??',special:true},
+  brilliant:{cls:'ann-brilliant',sym:'!!',special:true,label:'Brilliant'},
+  best:{cls:'ann-best',sym:'★',special:false,label:'Best'},
+  good:{cls:'ann-good',sym:'✓',special:false,label:'Good'},
+  inaccuracy:{cls:'ann-inaccuracy',sym:'?!',special:true,label:'Inaccuracy'},
+  mistake:{cls:'ann-mistake',sym:'?',special:true,label:'Mistake'},
+  blunder:{cls:'ann-blunder',sym:'??',special:true,label:'Blunder'},
 };
 const ANN_COLORS={
-  brilliant:'#1edcb4',best:'var(--green)',good:'var(--green)',
-  inaccuracy:'#d4a843',mistake:'#e07030',blunder:'#c0392b'
+  brilliant:'#1bafa3', best:'#5c8a3c', good:'#7a9e5e',
+  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e'
 };
 const ANN_BORDER={
-  brilliant:'#1edcb4',best:'var(--green)',good:'var(--border)',
-  inaccuracy:'#d4a843',mistake:'#e07030',blunder:'#c0392b'
+  brilliant:'#1bafa3', best:'#5c8a3c', good:'var(--border)',
+  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e'
 };
 // Maps a piece letter (uppercase) to a small white-icon SVG shown for "good"/"best" moves
 const PIECE_ICON_SVG = {
