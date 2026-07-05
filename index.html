@@ -122,10 +122,11 @@ nav {
 .logo-area { display: flex; align-items: center; gap: clamp(10px, 1vw, 16px); }
 .logo-icon {
   width: clamp(32px, 3vw, 46px); height: clamp(32px, 3vw, 46px);
-  background: var(--cream); border-radius: 7px;
+  background: var(--cream) url("assets/gambitreview-king-logo.png") center/82% auto no-repeat; border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
-.logo-icon img { width: 70%; height: 70%; object-fit: contain; }
+.logo-icon img { display: none; }
 .logo-name { font-weight: 800; font-size: clamp(17px, 1.6vw, 26px); letter-spacing: -0.5px; color: var(--cream); }
 .logo-name em { font-style: normal; color: var(--green-light); }
 nav ul { display: flex; gap: clamp(20px, 2.2vw, 36px); list-style: none; align-items: center; }
@@ -309,8 +310,8 @@ textarea { resize: vertical; min-height: 80px; width: 100%; }
 /* FOOTER */
 footer { border-top: 1px solid var(--border); padding: clamp(22px,2.2vw,36px) 5vw; display: flex; align-items: center; justify-content: space-between; font-size: clamp(11px,0.85vw,14px); color: var(--muted); }
 .footer-logo { display: flex; align-items: center; gap: 10px; }
-.footer-logo-icon { width: clamp(24px,2.2vw,34px); height: clamp(24px,2.2vw,34px); background: var(--cream); border-radius: 5px; display: flex; align-items: center; justify-content: center; }
-.footer-logo-icon img { width: 70%; height: 70%; object-fit: contain; }
+.footer-logo-icon { width: clamp(24px,2.2vw,34px); height: clamp(24px,2.2vw,34px); background: var(--cream) url("assets/gambitreview-king-logo.png") center/82% auto no-repeat; border-radius: 5px; display: flex; align-items: center; justify-content: center; overflow:hidden; }
+.footer-logo-icon img { display: none; }
 .footer-links { display: flex; gap: clamp(16px,1.8vw,28px); }
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--cream); }
@@ -562,7 +563,7 @@ footer a:hover { color: var(--cream); }
   <div id="tab-pgn" class="tab-panel">
     <div style="width:100%">
       <textarea placeholder="Paste your PGN here..." id="pgn-input"></textarea>
-      <div style="margin-top:10px"><button class="btn-primary" onclick="showSampleReview(document.getElementById('pgn-input').value.trim() || null)">Analyse Game</button></div>
+      <div style="margin-top:10px"><button class="btn-primary" onclick="startPgnReview(document.getElementById('pgn-input').value.trim())">Analyse Game</button></div>
     </div>
   </div>
   <p class="input-hint">2 free reviews without signing up. Sign up free to get 6 per day.</p>
@@ -1180,6 +1181,26 @@ function reviewGame(gameId) {
   } catch(e) {
     // sessionStorage unavailable (e.g. file:// with some browsers) — fall back to in-page review
     showSampleReview(pgn);
+  }
+}
+
+function startPgnReview(pgn) {
+  const clean = (pgn || '').trim();
+  if (!clean) {
+    window.location.href = 'review.html';
+    return;
+  }
+  if (parsePGNMoves(clean).length === 0) {
+    alert('Paste a valid PGN with at least one move.');
+    return;
+  }
+  const key = 'rv_' + Date.now();
+  try {
+    sessionStorage.setItem('gp_pgn_' + key, clean);
+    sessionStorage.setItem('gp_user_' + key, '');
+    window.location.href = 'review.html?key=' + encodeURIComponent(key);
+  } catch(e) {
+    window.location.href = 'review.html?pgn=' + encodeURIComponent(clean);
   }
 }
 
