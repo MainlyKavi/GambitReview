@@ -88,18 +88,23 @@ nav{
   width:100%;display:flex;align-items:center;justify-content:space-between;
   padding:4px 0;gap:10px;flex-shrink:0;
 }
-.player-info{display:flex;align-items:center;gap:10px;}
+.player-info{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:10px;min-width:0;}
 .player-avatar{
-  width:38px;height:38px;border-radius:50%;
+  width:44px;height:44px;border-radius:5px;
   background:#55534d;display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:800;color:var(--cream);flex-shrink:0;
+  font-size:15px;font-weight:900;color:var(--cream);flex-shrink:0;
   overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),0 6px 14px rgba(0,0,0,.22);
 }
 .player-avatar img{width:100%;height:100%;object-fit:cover;}
-.player-name{font-size:clamp(13px,1.12vw,16px);font-weight:800;color:#fff3c0;letter-spacing:-.15px;}
-.player-rating{font-size:clamp(10px,0.9vw,12px);color:#a8c97d;font-weight:800;white-space:nowrap;}
-.player-material{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;}
+.player-name{font-size:clamp(13px,1.12vw,16px);font-weight:900;color:#fff3c0;letter-spacing:-.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.player-rating{font-size:clamp(10px,0.9vw,12px);color:#a8c97d;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.player-material{display:flex;align-items:center;gap:0;min-height:20px;font-size:12px;color:#c9c4b5;font-weight:800;margin-top:1px;}
+.captured-piece-img{
+  width:19px;height:19px;object-fit:contain;display:inline-block;margin-right:-5px;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));
+}
+.material-score{font-size:11px;color:#b9d989;font-weight:900;margin-left:8px;}
 .clock-box{
   background:#282723;border:1px solid #3d3b36;border-radius:5px;
   min-width:38px;text-align:center;padding:5px 12px;font-size:clamp(13px,1.1vw,16px);font-weight:900;
@@ -157,7 +162,7 @@ nav{
   width:100%;aspect-ratio:1;
   box-shadow:0 18px 46px rgba(0,0,0,.45);
 }
-.sq{display:flex;align-items:center;justify-content:center;position:relative;cursor:default;overflow:hidden;}
+.sq{display:flex;align-items:center;justify-content:center;position:relative;cursor:default;overflow:visible;}
 .sq.light{background:#eeeed2;}
 .sq.dark{background:#779954;}
 .sq.hl-last{background:#d8d34a!important;}
@@ -172,14 +177,25 @@ nav{
   z-index:10;pointer-events:none;
 }
 .sq .move-ann-badge{
-  position:absolute;top:6px;right:6px;
-  min-width:clamp(18px,2vw,26px);height:clamp(18px,2vw,26px);
-  padding:0 5px;border-radius:999px;
+  position:absolute;top:10%;right:9%;
+  width:clamp(24px,2.9vw,34px);min-width:clamp(24px,2.9vw,34px);height:clamp(24px,2.9vw,34px);
+  padding:0;border-radius:999px;
   display:flex;align-items:center;justify-content:center;
-  font-size:clamp(8px,0.8vw,11px);font-weight:900;
+  font-size:clamp(10px,1.05vw,14px);font-weight:900;
   color:white;z-index:12;pointer-events:none;
-  box-shadow:0 3px 8px rgba(0,0,0,.3);
+  border:0;
+  box-shadow:0 3px 8px rgba(0,0,0,.38);
+  letter-spacing:-.6px;
 }
+.best-arrow-layer{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  z-index:11;pointer-events:none;overflow:visible;
+}
+.best-arrow-path{
+  stroke:#78cff5;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;
+  fill:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));opacity:.92;
+}
+.best-arrow-head{fill:#78cff5;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));}
 
 /* rank/file labels */
 .board-files{
@@ -210,6 +226,22 @@ nav{
   max-width:440px;
   padding:14px 14px 14px;
 }
+.analysis-panel.overview-mode .comment-bubble,
+.analysis-panel.overview-mode .review-action-row,
+.analysis-panel.overview-mode .move-list,
+.analysis-panel.overview-mode .panel-controls-row,
+.analysis-panel.overview-mode .accuracy-row{
+  display:none!important;
+}
+.analysis-panel.overview-mode .review-summary{display:grid!important;order:3;}
+.analysis-panel.overview-mode .eval-chart-section{order:2;}
+.analysis-panel.detail-mode .review-summary{display:none!important;}
+.analysis-panel.detail-mode .accuracy-row{display:none!important;}
+.analysis-panel.detail-mode .comment-bubble{order:1;}
+.analysis-panel.detail-mode .review-action-row{order:2;}
+.analysis-panel.detail-mode .move-list{order:3;}
+.analysis-panel.detail-mode .eval-chart-section{order:4;}
+.analysis-panel.detail-mode .panel-controls-row{order:5;}
 
 /* comment bubble */
 .analysis-status{
@@ -252,11 +284,88 @@ nav{
   font-family:Georgia,serif;font-size:clamp(12px,0.85vw,14px);
   color:#efe8cf;font-style:italic;line-height:1.6;font-weight:normal;
 }
+.review-action-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  padding:0 6px 10px;flex-shrink:0;
+}
+.review-action-btn{
+  height:42px;border-radius:6px;border:1px solid #403f38;
+  background:linear-gradient(#373631,#2a2925);color:#e9e3cd;
+  font:900 12px Montserrat,sans-serif;cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.22);
+}
+.review-action-btn:hover{border-color:#5b5a52;background:linear-gradient(#43413b,#302f2a);}
+.review-action-btn.next{background:linear-gradient(#74ae4a,#5f963d);border-color:#6daa45;color:#fff;}
 
 .review-summary{
   width:100%;max-width:none;margin:0 auto;
-  padding:0 6px 10px;display:grid;gap:8px;flex-shrink:0;
+  padding:0 6px 12px;display:grid;gap:10px;flex-shrink:0;
 }
+.overview-coach{
+  display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:center;
+  padding:4px 2px 2px;
+}
+.overview-coach-avatar{
+  width:58px;height:58px;border-radius:9px;
+  background:#2b2a26 url("assets/gambitreview-king-logo.png") center/78% auto no-repeat;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.overview-bubble{
+  background:#f4f3ea;color:#1c1c1a;border-radius:8px;
+  padding:10px 12px;line-height:1.35;font-size:12px;font-weight:800;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+  position:relative;
+}
+.overview-bubble:before{
+  content:"";position:absolute;left:-9px;bottom:12px;
+  border-width:9px 10px 9px 0;border-style:solid;
+  border-color:transparent #f4f3ea transparent transparent;
+}
+.overview-source{
+  margin-top:4px;font-size:9px;color:#6d6a61;font-weight:900;text-transform:uppercase;letter-spacing:.7px;
+}
+.overview-players{
+  display:grid;grid-template-columns:72px 1fr 28px 1fr;align-items:end;gap:8px;
+  padding:2px 0 0;
+}
+.overview-player-head{
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;
+}
+.overview-player-head strong{
+  width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  text-align:center;font-size:10px;color:#efe8cf;
+}
+.overview-player-avatar{
+  width:48px;height:48px;border-radius:6px;background:#3a3833;
+  display:flex;align-items:center;justify-content:center;color:#fff3c0;
+  font-weight:900;font-size:16px;border:2px solid rgba(255,255,255,.08);
+}
+.overview-player-avatar.featured{border-color:var(--green-light);box-shadow:0 0 0 2px rgba(143,200,91,.18);}
+.overview-row{
+  display:grid;grid-template-columns:72px 1fr 28px 1fr;align-items:center;gap:8px;
+  min-height:31px;font-size:11px;font-weight:900;
+}
+.overview-row.divider{border-top:1px solid #3b3934;margin-top:5px;padding-top:10px;}
+.overview-label{color:#efe8cf;font-size:10px;font-weight:900;}
+.overview-value{text-align:center;color:#fff3c0;font-size:15px;font-weight:900;}
+.overview-value.accuracy{
+  background:#f4f3ea;color:#171715;border-radius:5px;
+  padding:5px 4px;font-size:14px;justify-self:center;min-width:52px;
+}
+.overview-center{display:flex;align-items:center;justify-content:center;}
+.overview-icon{
+  min-width:20px;height:20px;border-radius:999px;padding:0 4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:900;color:#fff;line-height:1;
+  border:2px solid #24231f;
+}
+.overview-start{
+  width:100%;height:50px;border:0;border-radius:7px;
+  background:linear-gradient(#78b84d,#5f9f3d);
+  color:#fff;font:900 16px Montserrat,sans-serif;
+  cursor:pointer;box-shadow:0 10px 22px rgba(0,0,0,.24);
+}
+.overview-start:hover{filter:brightness(1.06);}
 .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .summary-tile{
   background:#191917;border:1px solid #383730;border-radius:7px;
@@ -385,8 +494,8 @@ nav{
 .ann-inaccuracy{background:#e0c44c;color:#1a1a1a;}
 .ann-mistake{background:#e8883e;color:#fff;}
 .ann-blunder{background:#e05a4e;color:#fff;}
-.ann-miss{background:#e8883e;color:#fff;}
-.ann-missed{background:#e8883e;color:#fff;}
+.ann-miss{background:#e05a4e;color:#fff;}
+.ann-missed{background:#e05a4e;color:#fff;}
 
 /* eval chart at bottom */
 .eval-chart-section{
@@ -549,6 +658,7 @@ nav{
       </div>
       <div class="board-wrap">
         <div class="chess-board" id="chessBoard"></div>
+        <svg class="best-arrow-layer" id="bestMoveArrowLayer" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
       </div>
     </div>
 
@@ -590,25 +700,23 @@ nav{
       </div>
       <div class="comment-text" id="commentText">Select a move to see its annotation.</div>
     </div>
+    <div class="review-action-row" id="reviewActionRow">
+      <button class="review-action-btn" onclick="explainCurrentMove()">Explain</button>
+      <button class="review-action-btn" onclick="showBestMoveForCurrent()">Best</button>
+      <button class="review-action-btn next" onclick="jumpToNextReviewMoment()">Next</button>
+    </div>
 
     <div class="review-summary" id="reviewSummary" style="display:none">
-      <div class="summary-grid">
-        <div class="summary-tile">
-          <div class="summary-label">Review</div>
-          <div class="summary-value" id="reviewGrade">--</div>
-          <div class="summary-sub" id="reviewGradeSub">Ready</div>
-        </div>
-        <div class="summary-tile">
-          <div class="summary-label">Best</div>
-          <div class="summary-value" id="bestMoveCount">0</div>
-          <div class="summary-sub">top moves</div>
-        </div>
-        <div class="summary-tile">
-          <div class="summary-label">Trouble</div>
-          <div class="summary-value" id="troubleMoveCount">0</div>
-          <div class="summary-sub">fix first</div>
+      <div class="overview-coach">
+        <div class="overview-coach-avatar"></div>
+        <div class="overview-bubble">
+          <div id="overviewHeadline">Game review is ready.</div>
+          <div class="overview-source" id="reviewGradeSub">Ready</div>
         </div>
       </div>
+      <div class="overview-players" id="overviewPlayers"></div>
+      <div id="overviewStats"></div>
+      <button class="overview-start" id="startReviewBtn" onclick="startMoveReview()">Start Review</button>
     </div>
 
     <!-- Eval chart -->
@@ -618,7 +726,7 @@ nav{
     </div>
 
     <!-- Accuracy -->
-    <div class="accuracy-row">
+    <div class="accuracy-row" id="accuracyRow">
       <div class="acc-box">
         <div class="acc-label">White Accuracy</div>
         <div class="acc-score" id="whiteAccuracy" style="color:#69923e">—</div>
@@ -635,7 +743,7 @@ nav{
     <div class="move-list" id="moveList"></div>
 
     <!-- Navigation controls + Share -->
-    <div class="panel-controls-row">
+    <div class="panel-controls-row" id="panelControlsRow">
       <div class="panel-nav-row">
         <button class="panel-ctrl-btn" onclick="manualJumpTo(0)" title="Start">⏮</button>
         <button class="panel-ctrl-btn" onclick="manualPrevMove()" title="Previous">◀</button>
@@ -1324,17 +1432,18 @@ const ANN = {
   blunder:{cls:'ann-blunder',sym:'??',special:true,label:'Blunder'},
   missed:{cls:'ann-missed',sym:'!',special:true,label:'Missed'},
 };
-ANN.best.sym = '*';
-ANN.good.sym = '+';
+ANN.best.sym = '★';
+ANN.good.sym = '✓';
+ANN.missed.sym = '×';
 const ANN_COLORS={
   brilliant:'#1bafa3', great:'#33c0d0', excellent:'#a6c86b',
   book:'#b99a62', best:'#5c8a3c', good:'#7a9e5e',
-  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e', missed:'#e8883e'
+  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e', missed:'#e05a4e'
 };
 const ANN_BORDER={
   brilliant:'#1bafa3', great:'#33c0d0', excellent:'#a6c86b',
   book:'#b99a62', best:'#5c8a3c', good:'var(--border)',
-  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e', missed:'#e8883e'
+  inaccuracy:'#e0c44c', mistake:'#e8883e', blunder:'#e05a4e', missed:'#e05a4e'
 };
 // Maps a piece letter (uppercase) to a small white-icon SVG shown for "good"/"best" moves
 const PIECE_ICON_SVG = {
@@ -1351,6 +1460,9 @@ let allMoves=[], currentIdx=0, boardHistory=[], moveInfos=[], fenHistory=[], rev
 let currentPGN='', currentMoveDetails=[], currentWhiteName='White', currentBlackName='Black';
 let currentWhiteElo=null, currentBlackElo=null;
 let autoCloudReviewStarted=false;
+let reviewOverviewVisible=true;
+let currentWhiteProfile=null, currentBlackProfile=null;
+let forcedBestArrowUci='';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -1414,6 +1526,7 @@ function sanToPieceType(san) {
 
 function loadGame(pgn) {
   autoCloudReviewStarted = false;
+  forcedBestArrowUci = '';
   currentPGN = pgn;
   const wMatch = pgn.match(/\[White "([^"]+)"\]/);
   const bMatch = pgn.match(/\[Black "([^"]+)"\]/);
@@ -1428,6 +1541,7 @@ function loadGame(pgn) {
   document.getElementById('blackName').textContent = bName;
   if(wRating) document.getElementById('whiteRating').textContent = '(' + wRating[1] + ')';
   if(bRating) document.getElementById('blackRating').textContent = '(' + bRating[1] + ')';
+  loadPlayerProfiles();
   document.title = `${bName} vs ${wName} - GambitReview`;
 
   // Determine board orientation: the searched/reviewed player's color stays at the bottom.
@@ -1466,7 +1580,8 @@ function loadGame(pgn) {
   buildMoveList();
   drawEvalChart();
   computeAccuracy();
-  currentIdx = 0;
+  currentIdx = Math.max(0, allMoves.length - 1);
+  setReviewPanelMode('overview');
   render();
   document.getElementById('loadingState').style.display='none';
   queueCloudEngineReview();
@@ -1912,6 +2027,11 @@ function reviewGame(moveDetails, wName, bName, evalOverride=null, sourceOverride
     m.winLoss = winLoss;
     m.moveAccuracy = moveAccuracyFromWinLoss(winLoss);
     m.bestMove = localReview?.bestMoveText || '';
+    m.bestMoveUci = normalizeBestMoveCandidate(
+      localReview?.bestMoveUci || localReview?.lines?.[0]?.pv?.[0] || localReview?.bestMove || localReview?.bestMoveText,
+      i,
+      m.side
+    );
     m.playedUci = infoToUci(m.info);
     const ann = classifyReviewedMove(m, i, beforeEval, afterEval);
     const deltaForMover = (afterEval - beforeEval) * (m.side === 'w' ? 1 : -1);
@@ -1975,18 +2095,15 @@ function renderReviewSummary(report) {
   const summary = document.getElementById('reviewSummary');
   if (!summary) return;
   summary.style.display = 'grid';
-
   const avg = Math.round(((report.whiteAccuracy || 0) + (report.blackAccuracy || 0)) / 2);
-  document.getElementById('reviewGrade').textContent = report.evalSource === 'estimate' ? '--' : gradeFromAccuracy(avg);
   const sourceText = report.evalSource === 'engine' ? 'eval based'
     : report.evalSource === 'cloud' ? 'cloud engine'
     : report.evalSource === 'cloud-mixed' ? 'cloud + local'
     : report.evalSource === 'mixed' ? 'mixed evals'
     : report.evalSource === 'local' ? 'local engine'
     : 'estimated';
-  document.getElementById('reviewGradeSub').textContent = report.evalSource === 'estimate' ? 'Engine needed' : avg + '% - ' + sourceText;
-  document.getElementById('bestMoveCount').textContent = (report.counts.brilliant || 0) + (report.counts.great || 0) + (report.counts.best || 0) + (report.counts.excellent || 0) + (report.counts.book || 0);
-  document.getElementById('troubleMoveCount').textContent = (report.counts.inaccuracy || 0) + (report.counts.mistake || 0) + (report.counts.blunder || 0) + (report.counts.missed || 0);
+  const sub = document.getElementById('reviewGradeSub');
+  if (sub) sub.textContent = report.evalSource === 'estimate' ? 'Engine needed' : avg + '% - ' + sourceText;
 }
 
 function rcToSq(pos) {
@@ -2203,6 +2320,7 @@ function renderBoard() {
     }
     board.appendChild(sq);
   }
+  renderBestMoveArrow(m);
 
   // Update file labels to match orientation
   const filesRow = document.querySelector('.board-files');
@@ -2210,6 +2328,90 @@ function renderBoard() {
     const files = boardFlipped ? ['h','g','f','e','d','c','b','a'] : ['a','b','c','d','e','f','g','h'];
     filesRow.innerHTML = files.map(f => `<span>${f}</span>`).join('');
   }
+}
+
+function bestMoveUciForMove(move, idx=currentIdx) {
+  if (!move) return '';
+  const review = localPositionReviews[idx] || {};
+  const candidates = [
+    move.bestMoveUci,
+    review.bestMoveUci,
+    review.lines?.[0]?.pv?.[0],
+    review.bestMove,
+    move.bestMove,
+    review.bestMoveText
+  ];
+  for (const candidate of candidates) {
+    const uci = normalizeBestMoveCandidate(candidate, idx, move.side);
+    if (uci) return uci;
+  }
+  return '';
+}
+
+function moveObjectToUci(moveObj) {
+  if (!moveObj || !moveObj.from || !moveObj.to) return '';
+  return rcToSq(moveObj.from) + rcToSq(moveObj.to) + (moveObj.promotion ? String(moveObj.promotion).toLowerCase() : '');
+}
+
+function sanBestMoveToUci(san, idx, side) {
+  if (!san) return '';
+  const trimmed = String(san).trim();
+  if (/^[a-h][1-8][a-h][1-8][qrbn]?$/i.test(trimmed)) return trimmed.toLowerCase();
+  const movingSide = side || allMoves[idx]?.side || (idx % 2 === 0 ? 'w' : 'b');
+  const beforeBoard = boardHistory[idx] || boardHistory[Math.max(0, idx - 1)] || newChessBoard();
+  try {
+    const info = applySANMoveDetailed(cloneBoard(beforeBoard), trimmed, movingSide === 'w');
+    return info?.success ? infoToUci(info) : '';
+  } catch {
+    return '';
+  }
+}
+
+function normalizeBestMoveCandidate(candidate, idx=currentIdx, side=null) {
+  if (!candidate) return '';
+  if (typeof candidate === 'string') return sanBestMoveToUci(candidate, idx, side);
+  return moveObjectToUci(candidate);
+}
+
+function visualSquareCenterFromUciSquare(square) {
+  const rc = sqToRC(square);
+  if (!inBounds(rc.r, rc.c)) return null;
+  const vr = boardFlipped ? 7 - rc.r : rc.r;
+  const vc = boardFlipped ? 7 - rc.c : rc.c;
+  return { x: (vc + 0.5) * 12.5, y: (vr + 0.5) * 12.5 };
+}
+
+function bestArrowUciForCurrentMove(move) {
+  if (!move || reviewOverviewVisible) return '';
+  const uci = forcedBestArrowUci || bestMoveUciForMove(move, currentIdx);
+  if (!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(uci || '')) return '';
+  const badMove = ['inaccuracy', 'mistake', 'missed', 'blunder'].includes(move.ann);
+  if (!forcedBestArrowUci && !badMove) return '';
+  if (!forcedBestArrowUci && uci === move.playedUci) return '';
+  return uci;
+}
+
+function renderBestMoveArrow(move) {
+  const layer = document.getElementById('bestMoveArrowLayer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  const uci = bestArrowUciForCurrentMove(move);
+  if (!uci) return;
+  const from = visualSquareCenterFromUciSquare(uci.slice(0, 2));
+  const to = visualSquareCenterFromUciSquare(uci.slice(2, 4));
+  if (!from || !to) return;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const end = { x: to.x - ux * 4.2, y: to.y - uy * 4.2 };
+  const headBase = { x: to.x - ux * 7.6, y: to.y - uy * 7.6 };
+  const px = -uy * 3.2;
+  const py = ux * 3.2;
+  layer.innerHTML = `
+    <path class="best-arrow-path" d="M ${from.x.toFixed(2)} ${from.y.toFixed(2)} L ${end.x.toFixed(2)} ${end.y.toFixed(2)}"></path>
+    <polygon class="best-arrow-head" points="${to.x.toFixed(2)},${to.y.toFixed(2)} ${(headBase.x + px).toFixed(2)},${(headBase.y + py).toFixed(2)} ${(headBase.x - px).toFixed(2)},${(headBase.y - py).toFixed(2)}"></polygon>`;
 }
 
 function highlightActiveMove() {
@@ -2238,9 +2440,53 @@ function updateComment() {
   textEl.textContent = reviewComment || m.reviewComment || describeMove(m, ann);
 }
 
+function explainCurrentMove() {
+  forcedBestArrowUci = '';
+  renderBoard();
+  updateComment();
+}
+
+function showBestMoveForCurrent() {
+  const m = allMoves[currentIdx];
+  if (!m) return;
+  const textEl = document.getElementById('commentText');
+  const badge = document.getElementById('commentBadge');
+  if (!textEl) return;
+  const alreadyBest = ['brilliant', 'great', 'best', 'book'].includes(m.ann);
+  if (badge) {
+    badge.textContent = 'Best';
+    badge.style.background = ANN_COLORS.best;
+    badge.style.color = '#fff';
+  }
+  forcedBestArrowUci = bestMoveUciForMove(m, currentIdx);
+  renderBoard();
+  if (m.bestMove && !alreadyBest) {
+    textEl.textContent = `Best was ${m.bestMove}. Compare it with ${m.move}: the engine line keeps more winning chances and avoids the swing in this position.`;
+  } else if (m.bestMove) {
+    textEl.textContent = `${m.move} is already close to the engine recommendation. Stockfish's main line starts with ${m.bestMove}.`;
+  } else {
+    textEl.textContent = `${m.move} is already one of the best practical choices in the current review.`;
+  }
+}
+
+function isReviewMoment(move) {
+  return move && ['brilliant', 'great', 'inaccuracy', 'mistake', 'missed', 'blunder'].includes(move.ann);
+}
+
+function jumpToNextReviewMoment() {
+  for (let i = currentIdx + 1; i < allMoves.length; i++) {
+    if (isReviewMoment(allMoves[i])) {
+      manualJumpTo(i);
+      return;
+    }
+  }
+  manualJumpTo(Math.min(allMoves.length - 1, currentIdx + 1));
+}
+
 function jumpTo(idx) {
   const clampedIdx = Math.max(0,Math.min(allMoves.length-1,idx));
   const moved = clampedIdx !== currentIdx;
+  forcedBestArrowUci = '';
   currentIdx = clampedIdx;
   render();
   if (moved) {
@@ -2413,15 +2659,49 @@ function materialAdvantage(board) {
   return Math.round(score * 10) / 10;
 }
 
+function capturedPiecesBySide(side, uptoIndex) {
+  const captured = [];
+  for (let i = 0; i <= uptoIndex && i < allMoves.length; i++) {
+    const move = allMoves[i];
+    if (move?.side === side && move.info?.captured) captured.push(move.info.captured);
+  }
+  return captured.sort((a, b) => pieceValue(b) - pieceValue(a));
+}
+
+function capturedPieceSymbol(piece) {
+  const type = piece?.[1] || piece || '';
+  const color = piece?.[0] || 'w';
+  const symbols = {
+    w: { P:'♙', N:'♘', B:'♗', R:'♖', Q:'♕' },
+    b: { P:'♟', N:'♞', B:'♝', R:'♜', Q:'♛' }
+  };
+  return symbols[color]?.[type] || '';
+}
+
+function capturedPieceImageHtml(piece) {
+  const src = PIECES[piece];
+  if (!src) return '';
+  return `<img class="captured-piece-img" src="${escapeHtml(src)}" alt="${escapeHtml(piece)}">`;
+}
+
+function materialLineHtml(side, board, uptoIndex) {
+  const captured = capturedPiecesBySide(side, uptoIndex)
+    .map(capturedPieceImageHtml)
+    .join('');
+  const score = materialAdvantage(board) * (side === 'w' ? 1 : -1);
+  const scoreText = score > 0 ? `<span class="material-score">+${score}</span>` : '';
+  return captured || scoreText ? `${captured}${scoreText}` : '';
+}
+
 function updateMaterialPanels() {
   const idx = allMoves[currentIdx] ? allMoves[currentIdx].histIdx : 0;
   const board = boardHistory[idx] || boardHistory[0] || newChessBoard();
-  const score = materialAdvantage(board);
   const whiteMat = document.getElementById('whiteMaterial');
   const blackMat = document.getElementById('blackMaterial');
   if (!whiteMat || !blackMat) return;
-  whiteMat.textContent = score > 0 ? '+' + score : '';
-  blackMat.textContent = score < 0 ? '+' + Math.abs(score) : '';
+  const uptoIndex = allMoves[currentIdx] ? currentIdx : -1;
+  whiteMat.innerHTML = materialLineHtml('w', board, uptoIndex);
+  blackMat.innerHTML = materialLineHtml('b', board, uptoIndex);
 }
 
 function computeAccuracy() {
@@ -2669,6 +2949,7 @@ function reviewPastedPGN() {
 
 function loadGame(pgn) {
   autoCloudReviewStarted = false;
+  forcedBestArrowUci = '';
   currentPGN = pgn;
   const wMatch = pgn.match(/\[White "([^"]+)"\]/);
   const bMatch = pgn.match(/\[Black "([^"]+)"\]/);
@@ -2685,6 +2966,7 @@ function loadGame(pgn) {
   document.getElementById('blackName').textContent = bName;
   document.getElementById('whiteRating').textContent = Number.isFinite(currentWhiteElo) ? '(' + currentWhiteElo + ')' : '';
   document.getElementById('blackRating').textContent = Number.isFinite(currentBlackElo) ? '(' + currentBlackElo + ')' : '';
+  loadPlayerProfiles();
   document.title = `${bName} vs ${wName} - GambitReview`;
 
   const reviewedUsername = (window._gpReviewUsername || '').toLowerCase();
@@ -2722,7 +3004,8 @@ function loadGame(pgn) {
   buildMoveList();
   drawEvalChart();
   computeAccuracy();
-  currentIdx = 0;
+  currentIdx = Math.max(0, allMoves.length - 1);
+  setReviewPanelMode('overview');
   render();
   document.getElementById('loadingState').style.display='none';
   queueCloudEngineReview();
@@ -3097,6 +3380,55 @@ function formatRatingLabel(knownElo, estimatedElo) {
   return [known, estimated].filter(Boolean).join(' | ');
 }
 
+function sideProfile(side) {
+  return side === 'w' ? currentWhiteProfile : currentBlackProfile;
+}
+
+function chessComUsernameFromName(name) {
+  const username = String(name || '').trim();
+  if (!/^[a-z0-9_-]{2,25}$/i.test(username)) return '';
+  if (/^(white|black|player|unknown)$/i.test(username)) return '';
+  return username;
+}
+
+function setPlayerAvatar(side, profile=null) {
+  const el = document.getElementById(side === 'w' ? 'whiteAvatar' : 'blackAvatar');
+  if (!el) return;
+  const name = sideDisplayName(side);
+  const avatar = profile?.avatar || '';
+  if (avatar) {
+    el.innerHTML = `<img src="${escapeHtml(avatar)}" alt="${escapeHtml(name)}">`;
+  } else {
+    el.textContent = sideInitials(name);
+  }
+}
+
+async function fetchChessComProfileForSide(side, name) {
+  setPlayerAvatar(side, null);
+  const username = chessComUsernameFromName(name);
+  if (!username || typeof fetch !== 'function') return;
+  try {
+    const res = await fetch(`https://api.chess.com/pub/player/${encodeURIComponent(username.toLowerCase())}`, {
+      headers: { Accept: 'application/json' }
+    });
+    if (!res.ok) return;
+    const profile = await res.json();
+    if (side === 'w') currentWhiteProfile = profile;
+    else currentBlackProfile = profile;
+    setPlayerAvatar(side, profile);
+    if (reviewReport) renderOverviewStats(reviewReport);
+  } catch (err) {
+    setPlayerAvatar(side, null);
+  }
+}
+
+function loadPlayerProfiles() {
+  currentWhiteProfile = null;
+  currentBlackProfile = null;
+  fetchChessComProfileForSide('w', currentWhiteName);
+  fetchChessComProfileForSide('b', currentBlackName);
+}
+
 function renderEstimatedRatings(report) {
   const whiteEstimate = estimatePlayerRatingFromGame('w', report);
   const blackEstimate = estimatePlayerRatingFromGame('b', report);
@@ -3112,6 +3444,197 @@ function renderEstimatedRatings(report) {
   }
 }
 
+function sideDisplayName(side) {
+  return side === 'w' ? currentWhiteName : currentBlackName;
+}
+
+function sideKnownElo(side) {
+  return side === 'w' ? currentWhiteElo : currentBlackElo;
+}
+
+function sideAccuracyValue(side, report) {
+  return side === 'w' ? report.whiteAccuracy : report.blackAccuracy;
+}
+
+function sideInitials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function overviewSides() {
+  return boardFlipped ? ['b', 'w'] : ['w', 'b'];
+}
+
+function annTextColor(ann) {
+  return (ann === 'inaccuracy' || ann === 'book' || ann === 'excellent' || ann === 'great') ? '#1a1a1a' : '#fff';
+}
+
+function overviewIcon(ann) {
+  const meta = ANN[ann] || ANN.good;
+  const color = ANN_COLORS[ann] || ANN_COLORS.good;
+  return `<span class="overview-icon ${meta.cls}" style="background:${color};color:${annTextColor(ann)}">${escapeHtml(meta.sym)}</span>`;
+}
+
+function sideCounts(side) {
+  const counts = {};
+  allMoves.filter(m => m.side === side).forEach(move => {
+    counts[move.ann] = (counts[move.ann] || 0) + 1;
+  });
+  return counts;
+}
+
+function boardMaterialTotal(board) {
+  let total = 0;
+  (board || []).forEach(row => row.forEach(piece => {
+    if (!piece || piece[1] === 'K') return;
+    total += pieceValue(piece);
+  }));
+  return total;
+}
+
+function phaseForMoveIndex(index) {
+  if (index < 14) return 'opening';
+  const move = allMoves[index];
+  const board = boardHistory[move?.histIdx || index + 1] || null;
+  const material = boardMaterialTotal(board);
+  if (material <= 25 || index >= Math.max(14, allMoves.length - 10)) return 'endgame';
+  return 'middlegame';
+}
+
+function phaseVerdict(side, phase) {
+  const moves = allMoves.filter((move, index) => move.side === side && phaseForMoveIndex(index) === phase);
+  if (!moves.length) return null;
+  const counts = {};
+  moves.forEach(move => { counts[move.ann] = (counts[move.ann] || 0) + 1; });
+  if (phase === 'opening' && (counts.book || 0) >= Math.max(2, Math.ceil(moves.length * 0.45))) return 'book';
+  const avg = moves.reduce((sum, move) => sum + (ANN_SCORE[move.ann] || 75), 0) / moves.length;
+  if (avg >= 97 && ((counts.brilliant || 0) || (counts.great || 0))) return counts.brilliant ? 'brilliant' : 'great';
+  if (avg >= 94) return 'best';
+  if (avg >= 88) return 'excellent';
+  if (avg >= 76) return 'good';
+  if (avg >= 61) return 'inaccuracy';
+  if (avg >= 40) return 'mistake';
+  return 'blunder';
+}
+
+function sidePerformanceText(side, report) {
+  const acc = sideAccuracyValue(side, report) || 0;
+  const counts = sideCounts(side);
+  const trouble = (counts.blunder || 0) + (counts.mistake || 0);
+  const special = (counts.brilliant || 0) + (counts.great || 0);
+  if (acc >= 88 && special) return `${sideDisplayName(side)} found the important ideas.`;
+  if (acc >= 82) return `${sideDisplayName(side)} played a clean game.`;
+  if (trouble >= 3) return `${sideDisplayName(side)} had several moments to fix.`;
+  if (acc >= 70) return `${sideDisplayName(side)} was solid, with a few slips.`;
+  return `${sideDisplayName(side)} left chances on the board.`;
+}
+
+function renderOverviewPlayers(sides, report) {
+  const el = document.getElementById('overviewPlayers');
+  if (!el) return;
+  const [left, right] = sides;
+  const playerHtml = side => {
+    const name = sideDisplayName(side);
+    const profile = sideProfile(side);
+    const avatarStyle = profile?.avatar ? ` style="background-image:url('${escapeHtml(profile.avatar)}');background-size:cover;background-position:center"` : '';
+    return `<div class="overview-player-head">
+      <strong title="${escapeHtml(name)}">${escapeHtml(name)}</strong>
+      <div class="overview-player-avatar${side === (boardFlipped ? 'b' : 'w') ? ' featured' : ''}"${avatarStyle}>${profile?.avatar ? '' : escapeHtml(sideInitials(name))}</div>
+    </div>`;
+  };
+  el.innerHTML = `<div class="overview-label">Players</div>${playerHtml(left)}<div></div>${playerHtml(right)}`;
+}
+
+function renderOverviewRow(label, leftValue, iconAnn, rightValue, options={}) {
+  const cls = options.divider ? ' overview-row divider' : 'overview-row';
+  const valueClass = options.valueClass ? ` overview-value ${options.valueClass}` : 'overview-value';
+  const valueStyle = options.valueColor ? ` style="color:${options.valueColor}"` : '';
+  return `<div class="${cls}">
+    <div class="overview-label">${escapeHtml(label)}</div>
+    <div class="${valueClass}"${valueStyle}>${leftValue}</div>
+    <div class="overview-center">${iconAnn ? overviewIcon(iconAnn) : ''}</div>
+    <div class="${valueClass}"${valueStyle}>${rightValue}</div>
+  </div>`;
+}
+
+function renderOverviewStats(report) {
+  const stats = document.getElementById('overviewStats');
+  if (!stats || !report) return;
+  const sides = overviewSides();
+  const [left, right] = sides;
+  const leftCounts = sideCounts(left);
+  const rightCounts = sideCounts(right);
+  const rows = [
+    ['Brilliant', 'brilliant'],
+    ['Great', 'great'],
+    ['Book', 'book'],
+    ['Best', 'best'],
+    ['Excellent', 'excellent'],
+    ['Good', 'good'],
+    ['Inaccuracy', 'inaccuracy'],
+    ['Mistake', 'mistake'],
+    ['Miss', 'missed'],
+    ['Blunder', 'blunder']
+  ];
+  const leftRating = estimatePlayerRatingFromGame(left, report);
+  const rightRating = estimatePlayerRatingFromGame(right, report);
+  let html = renderOverviewRow(
+    'Accuracy',
+    Number.isFinite(sideAccuracyValue(left, report)) ? sideAccuracyValue(left, report).toFixed(1) : '--',
+    'best',
+    Number.isFinite(sideAccuracyValue(right, report)) ? sideAccuracyValue(right, report).toFixed(1) : '--',
+    { valueClass: 'accuracy' }
+  );
+  rows.forEach(([label, ann]) => {
+    html += renderOverviewRow(label, leftCounts[ann] || 0, ann, rightCounts[ann] || 0, { valueColor: ANN_COLORS[ann] || '#fff3c0' });
+  });
+  html += renderOverviewRow(
+    'Game Rating',
+    Number.isFinite(leftRating) ? leftRating : '--',
+    null,
+    Number.isFinite(rightRating) ? rightRating : '--',
+    { divider: true }
+  );
+  ['opening', 'middlegame', 'endgame'].forEach(phase => {
+    const l = phaseVerdict(left, phase);
+    const r = phaseVerdict(right, phase);
+    html += renderOverviewRow(
+      phase.charAt(0).toUpperCase() + phase.slice(1),
+      l ? overviewIcon(l) : '-',
+      null,
+      r ? overviewIcon(r) : '-'
+    );
+  });
+  stats.innerHTML = html;
+  renderOverviewPlayers(sides, report);
+}
+
+function setReviewPanelMode(mode) {
+  const panel = document.querySelector('.analysis-panel');
+  if (!panel) return;
+  reviewOverviewVisible = mode === 'overview';
+  panel.classList.toggle('overview-mode', reviewOverviewVisible);
+  panel.classList.toggle('detail-mode', !reviewOverviewVisible);
+}
+
+function firstReviewMoveIndex() {
+  const priority = ['blunder', 'mistake', 'missed', 'inaccuracy', 'brilliant', 'great'];
+  for (const ann of priority) {
+    const idx = allMoves.findIndex(move => move.ann === ann);
+    if (idx >= 0) return idx;
+  }
+  const nonBook = allMoves.findIndex(move => move.ann !== 'book');
+  return nonBook >= 0 ? nonBook : 0;
+}
+
+function startMoveReview() {
+  stopAutoPlayIfRunning();
+  setReviewPanelMode('detail');
+  jumpTo(firstReviewMoveIndex());
+}
+
 function renderReviewSummary(report) {
   const summary = document.getElementById('reviewSummary');
   if (!summary) return;
@@ -3125,10 +3648,16 @@ function renderReviewSummary(report) {
     : report.evalSource === 'mixed' ? 'mixed evals'
     : report.evalSource === 'local' ? 'local estimate'
     : 'estimated';
-  document.getElementById('reviewGrade').textContent = report.evalSource === 'estimate' ? '--' : gradeFromAccuracy(avg);
+  const headline = document.getElementById('overviewHeadline');
+  if (headline) {
+    const sides = overviewSides();
+    const betterSide = (report.whiteAccuracy || 0) >= (report.blackAccuracy || 0) ? 'w' : 'b';
+    const line = sidePerformanceText(betterSide, report);
+    const trouble = ((report.counts.blunder || 0) + (report.counts.mistake || 0));
+    headline.textContent = trouble ? `${line} Review the trouble moments first.` : `${line} Very steady game.`;
+  }
   document.getElementById('reviewGradeSub').textContent = report.evalSource === 'estimate' ? 'Engine needed' : avg + '% - ' + sourceText;
-  document.getElementById('bestMoveCount').textContent = (report.counts.brilliant || 0) + (report.counts.best || 0) + (report.counts.excellent || 0) + (report.counts.book || 0);
-  document.getElementById('troubleMoveCount').textContent = (report.counts.inaccuracy || 0) + (report.counts.mistake || 0) + (report.counts.blunder || 0) + (report.counts.missed || 0);
+  renderOverviewStats(report);
   renderEstimatedRatings(report);
 }
 
@@ -3562,7 +4091,11 @@ async function runCloudEngineReview(options={}) {
     const beforeReview = localPositionReviews[i];
     const afterReview = localPositionReviews[i + 1];
     const playedUci = infoToUci(move.info);
-    const bestUci = beforeReview?.bestMoveUci || beforeReview?.bestMove || beforeReview?.lines?.[0]?.pv?.[0] || '';
+    const bestUci = normalizeBestMoveCandidate(
+      beforeReview?.bestMoveUci || beforeReview?.lines?.[0]?.pv?.[0] || beforeReview?.bestMove || beforeReview?.bestMoveText,
+      i,
+      move.side
+    );
 
     if (beforeReview?.lines?.length && afterReview) {
       const beforeWin = getPositionWinPercentage(beforeReview, beforeEval);
@@ -3676,6 +4209,11 @@ async function runCloudEngineReview(options={}) {
       m.winLoss = winLoss;
       m.moveAccuracy = moveAccuracyFromWinLoss(winLoss);
       m.bestMove = review?.bestMoveText || '';
+      m.bestMoveUci = normalizeBestMoveCandidate(
+        review?.bestMoveUci || review?.lines?.[0]?.pv?.[0] || review?.bestMove || review?.bestMoveText,
+        i,
+        m.side
+      );
       m.playedUci = infoToUci(m.info);
       const ann = classifyReviewedMove(m, i, beforeEval, afterEval);
       const deltaForMover = (afterEval - beforeEval) * (m.side === 'w' ? 1 : -1);
@@ -3713,19 +4251,22 @@ async function runCloudEngineReview(options={}) {
     const acc = move.moveAccuracy ?? 0;
     const before = evalPhrase(move.evalBefore);
     const after = evalPhrase(move.evalAfter);
-    const best = move.bestMove && !['best','book'].includes(ann) ? ` Best was ${move.bestMove}.` : '';
-    const swingText = ` The position moved from ${before} to ${after}.`;
+    const best = move.bestMove && !['best','book'].includes(ann) ? ` Best was ${move.bestMove}, shown by the arrow when available.` : '';
+    const swingText = ` Evaluation: ${before} → ${after}.`;
+    const lossText = loss ? ` Engine loss: ${loss} cp.` : '';
+    const captureText = move.info?.captured ? ' It also changes the material balance.' : '';
+    const checkText = move.move.includes('+') ? ' The check limits the opponent, so the tactic is forcing.' : '';
     const lines = {
-      brilliant: `${move.move} is brilliant. It is a sound sacrifice or forcing idea that keeps the engine line strong.`,
-      great: `${move.move} is a great move. It appears to be the key move that preserved or changed the outcome of the position.`,
-      best: `${move.move} is Stockfish's top choice. It keeps the strongest continuation on the board.`,
+      brilliant: `${move.move} is brilliant. It is a sound sacrifice or forcing idea that keeps the engine line strong.${checkText}${captureText}`,
+      great: `${move.move} is a great move. It preserves the best practical chance in a sharp position.${swingText}`,
+      best: `${move.move} is Stockfish's top choice. It keeps the strongest continuation on the board.${checkText}`,
       book: `${move.move} is a book move. The opening is still following normal theory.`,
-      excellent: `${move.move} is excellent. It stays very close to the best engine line.`,
-      good: `${move.move} is good. It gives up only a small amount of winning chances. Accuracy ${acc}%, loss ${loss} cp.`,
-      inaccuracy: `${move.move} is an inaccuracy. It loses some winning chances.${swingText}${best}`,
-      mistake: `${move.move} is a mistake. The evaluation swing is large enough to change the character of the game.${swingText}${best}`,
-      blunder: `${move.move} is a blunder. It hands the opponent a major swing.${swingText}${best}`,
-      missed: `${move.move} missed a stronger continuation.${best}`
+      excellent: `${move.move} is excellent. It stays very close to the best engine line.${lossText}`,
+      good: `${move.move} is playable. It gives up only a small amount of winning chances. Accuracy ${acc}%.${lossText}`,
+      inaccuracy: `${move.move} is an inaccuracy. It gives the opponent a cleaner path back into the game.${swingText}${lossText}${best}`,
+      mistake: `${move.move} is a mistake. The evaluation swing is large enough to change the plan you should be playing for.${swingText}${lossText}${best}`,
+      blunder: `${move.move} is a blunder. It gives the opponent a major tactical or positional swing.${swingText}${lossText}${best}`,
+      missed: `${move.move} missed a stronger continuation.${swingText}${best}`
     };
     return lines[ann] || legacy.describeMove(move, ann);
   };
